@@ -1,0 +1,117 @@
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+
+export default function QRCodeScreen({ route, navigation }) {
+  const { webUrl, identifier, amount, currencySymbol } = route.params;
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
+  useEffect(() => {
+  const socket = new WebSocket(`wss://payments.pre-bnvo.com/ws/merchant/${identifier}`);
+
+  socket.onopen = () => {
+    console.log('WebSocket connected');
+  };
+
+  socket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log('WS message:', data);
+      if (data?.status === 'CO') {
+        setPaymentStatus('completed');
+        navigation.replace('PaymentCompleted', { identifier });
+      }
+    } catch (err) {
+      console.error('WebSocket message parse error:', err);
+    }
+  };
+
+  socket.onerror = (e) => {
+    console.error('WebSocket error:', e.message);
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket closed');
+  };
+
+  return () => socket.close();
+}, [identifier, navigation]);
+
+  return (
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.banner}>
+        <Text style={styles.bannerText}>
+          Escanea el QR y serás redirigido a la pasarela de pago de Bitnovo Pay.
+        </Text>
+      </View>
+
+      <View style={styles.qrWrapper}>
+        <QRCode
+          value={`https://${webUrl}`}
+          size={240}
+          logo={require('../assets/images/bitnovoLogo.png')}
+          logoSize={60}
+        />
+      </View>
+
+      <Text style={styles.amount}>
+        {parseFloat(amount).toFixed(2)} {currencySymbol}
+      </Text>
+
+      <Text style={styles.note}>
+        Esta pantalla se actualizará automáticamente.
+      </Text>
+
+      {paymentStatus === 'pending' && (
+        <ActivityIndicator color="#fff" style={{ marginTop: 16 }} />
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#0052CC',
+    alignItems: 'center',
+    paddingTop: 20,
+  },
+  banner: {
+    backgroundColor: '#EAF1FC',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginBottom: 24,
+    marginHorizontal: 20,
+  },
+  bannerText: {
+    textAlign: 'center',
+    color: '#003E8A',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  qrWrapper: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
+  },
+  amount: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: 'white',
+    marginBottom: 12,
+  },
+  note: {
+    color: '#D6E4F5',
+    fontSize: 14,
+    textAlign: 'center',
+    paddingHorizontal: 32,
+  },
+});
