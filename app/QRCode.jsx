@@ -10,38 +10,44 @@ import QRCode from 'react-native-qrcode-svg';
 
 export default function QRCodeScreen({ route, navigation }) {
   const { webUrl, identifier, amount, currencySymbol } = route.params;
-  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [isWaitingPayment, setIsWaitingPayment] = useState(false);
 
   useEffect(() => {
-  const socket = new WebSocket(`wss://payments.pre-bnvo.com/ws/merchant/${identifier}`);
+    const socket = new WebSocket(`wss://payments.pre-bnvo.com/ws/merchant/${identifier}`);
 
-  socket.onopen = () => {
-    console.log('WebSocket connected');
-  };
+    socket.onopen = () => {
+      console.log('WebSocket connected');
+    };
 
-  socket.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      console.log('WS message:', data);
-      if (data?.status === 'CO') {
-        setPaymentStatus('completed');
-        navigation.replace('PaymentCompleted', { identifier });
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WS message:', data);
+
+        if (data?.status === 'IA') {
+          console.log('WS message:', data);
+          setIsWaitingPayment(true);
+        }
+
+        if (data?.status === 'CO') {
+          console.log('WS message:', data);
+          navigation.replace('PaymentCompleted', { identifier });
+        }
+      } catch (err) {
+        console.error('WebSocket message parse error:', err);
       }
-    } catch (err) {
-      console.error('WebSocket message parse error:', err);
-    }
-  };
+    };
 
-  socket.onerror = (e) => {
-    console.error('WebSocket error:', e.message);
-  };
+    socket.onerror = (e) => {
+      console.error('WebSocket error:', e.message);
+    };
 
-  socket.onclose = () => {
-    console.log('WebSocket closed');
-  };
+    socket.onclose = () => {
+      console.log('WebSocket closed');
+    };
 
-  return () => socket.close();
-}, [identifier, navigation]);
+    return () => socket.close();
+  }, [identifier, navigation]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -68,7 +74,7 @@ export default function QRCodeScreen({ route, navigation }) {
         Esta pantalla se actualizará automáticamente.
       </Text>
 
-      {paymentStatus === 'pending' && (
+      {isWaitingPayment === true && (
         <ActivityIndicator color="#fff" style={{ marginTop: 16 }} />
       )}
     </SafeAreaView>

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Clipboard,
   Image,
   Linking,
   StyleSheet,
@@ -12,7 +11,6 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { CountryPicker } from "react-native-country-codes-picker";
 import shareImg from '../assets/images/copyLink.png';
 import emailIcon from '../assets/images/email.png';
 import paymentIcon from '../assets/images/paymentIcon.png';
@@ -20,31 +18,33 @@ import QRIcon from '../assets/images/QRIcon.png';
 import shareIcon from '../assets/images/share.png';
 import whatsappIcon from '../assets/images/whatsappIcon.png';
 import SuccessModal from './components/SuccessModal';
+import CountrySelector from './CountrySelector';
 
 export default function SharePaymentScreen({ navigation }) {
   const route = useRoute();
   const { identifier, webUrl, amount, currencySymbol } = route.params;
   const [countryCode, setCountryCode] = useState('+54');
-  const [show, setShow] = useState(false);
   const [isPhoneFocused, setIsPhoneFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [succesVisible, setSuccessVisible] = useState(false);
   const [successChannel, setSuccessChannel] = useState('');
   const [isWaitingPayment, setIsWaitingPayment] = useState(false);
+  const [isCountrySelectorVisible, setIsCountrySelectorVisible] = useState(false);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    if (route.params?.selectedCountry) {
+      setCountryCode(route.params.selectedCountry.dialCode);
+    }
+  }, [route.params?.selectedCountry]);
 
   useEffect(() => {
     navigation.setOptions({ title: 'Solicitar pago' });
   }, [navigation]);
 
   const fullUrl = `https://${webUrl}`;
-
-  const handleCopyLink = () => {
-    Clipboard.setString(fullUrl);
-    Alert.alert('Copiado', 'Enlace copiado al portapapeles');
-  };
 
   const handleWhatsappShare = () => {
     if (!phoneNumber) {
@@ -72,7 +72,6 @@ export default function SharePaymentScreen({ navigation }) {
       .then(() => {
         setSuccessChannel('WhatsApp');
         setSuccessVisible(true);
-        setIsWaitingPayment(true);
       })
       .catch(() => {
         Alert.alert('Error', 'No se pudo abrir WhatsApp');
@@ -89,7 +88,6 @@ export default function SharePaymentScreen({ navigation }) {
         .then(() => {
           setSuccessVisible(true);
           setSuccessChannel('correo electrónico');
-          setIsWaitingPayment(true);
         })
         .catch(() => {
           Alert.alert('Error', 'No se pudo abrir el cliente de correo electrónico');
@@ -110,6 +108,12 @@ export default function SharePaymentScreen({ navigation }) {
       try {
         const data = JSON.parse(event.data);
         console.log('WS message:', data);
+
+        if (data?.status === 'IA') {
+          console.log('WS message:', data);
+          setIsWaitingPayment(true);
+        }
+
         if (data?.status === 'CO') {
           navigation.replace('PaymentCompleted', { identifier });
         }
@@ -129,14 +133,6 @@ export default function SharePaymentScreen({ navigation }) {
     return () => socket.close();
   }, [identifier, navigation]);
 
-  // const handleShareOther = async () => {
-  //   try {
-  //     await Share.share({ message: fullUrl });
-  //   } catch (error) {
-  //     console.error('Error al compartir', error);
-  //   }
-  // };
-
   return (
     <View style={styles.container}>
       <View style={styles.paymentBox}>
@@ -150,8 +146,8 @@ export default function SharePaymentScreen({ navigation }) {
         <Text style={styles.paymentSubtitle}>Comparte el enlace de pago con el cliente</Text>
       </View>
 
-      <View style={styles.shareLink}>
-        <View style={styles.input}>
+      <View style={styles.linkWrapper}>
+        <View style={[styles.shareLink, { width: '80%', marginBottom: 0 }]}>
           <Image source={shareIcon} style={{ width: 24, height: 24, marginRight: 8 }} />
           <TextInput
             style={styles.textInput}
@@ -160,8 +156,14 @@ export default function SharePaymentScreen({ navigation }) {
             multiline={false}
           />
         </View>
-        <TouchableOpacity onPress={handleCopyLink}>
-          <Image source={shareImg} style={{ width: 40, height: 40 }} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('QRCode', {
+            webUrl,
+            identifier,
+            amount,
+            currencySymbol,
+          })}>
+          <Image source={shareImg} style={{ height: 72, width: 64, borderRadius: 6 }} />
         </TouchableOpacity>
       </View>
       <View style={styles.shareLink}>
@@ -184,18 +186,11 @@ export default function SharePaymentScreen({ navigation }) {
       </View>
       <View style={styles.shareLink}>
         <Image source={whatsappIcon} style={{ width: 24, height: 24, marginRight: 8 }} />
-        <TouchableOpacity onPress={() => setShow(true)}>
+        <TouchableOpacity onPress={() => setIsCountrySelectorVisible(true)}>
           <Text style={{ color: '#002859', fontWeight: '600', fontSize: 16, marginRight: 8 }}>
             {countryCode} ▼
           </Text>
         </TouchableOpacity>
-        <CountryPicker
-          show={show}
-          pickerButtonOnPress={(item) => {
-            setCountryCode(item.dial_code);
-            setShow(false);
-          }}
-        />
         <TextInput
           style={styles.textInput}
           placeholder="Enviar a número de WhatsApp"
@@ -215,19 +210,9 @@ export default function SharePaymentScreen({ navigation }) {
       </View>
 
       <View style={styles.shareLink}>
-        <View style={[styles.input, { flex: 1, flexDirection: 'row', alignItems: 'center' }]}>
-          <Image source={QRIcon} style={{ width: 24, height: 24, marginEnd: 6 }} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate('QRCode', {
-              webUrl,
-              identifier,
-              amount,
-              currencySymbol,
-            })}
-            style={styles.actionRow}
-          >
-            <Text style={styles.shareText}>Mostrar código QR</Text>
-          </TouchableOpacity>
+        <Image source={QRIcon} style={{ width: 24, height: 24, marginEnd: 6 }} />
+        <View style={[styles.textInput, { flex: 1, flexDirection: 'row', alignItems: 'center' }]}>
+          <Text style={styles.shareText}>Compartir con otras aplicaciones</Text>
         </View>
       </View>
       <SuccessModal
@@ -241,6 +226,12 @@ export default function SharePaymentScreen({ navigation }) {
           <Text style={styles.waitingText}>Esperando el pago del cliente...</Text>
         </View>
       )}
+      <CountrySelector
+        visible={isCountrySelectorVisible}
+        onClose={() => setIsCountrySelectorVisible(false)}
+        onSelect={(dial) => setCountryCode(dial)}
+        selectedDialCode={countryCode}
+      />
     </View>
   );
 }
@@ -277,31 +268,36 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F4F7FB',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 6,
+    marginBottom: 16,
+  },
+  linkWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginBottom: 16,
   },
   input: {
     flex: 1,
-    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 16,
   },
   textInput: {
     flex: 1,
-    height: 48,
-    fontSize: 14,
+    fontSize: 12,
     color: '#002859',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
   },
   button: {
     backgroundColor: '#035AC5',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
   },
   buttonText: {
@@ -316,7 +312,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     padding: 16,
     backgroundColor: '#E6F1FF',
-    borderRadius: 8,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },

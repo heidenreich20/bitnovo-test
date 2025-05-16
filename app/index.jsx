@@ -1,11 +1,11 @@
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { Image, StatusBar } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BitnovoLogo from '../assets/images/bitnovoPay.png';
+import CountrySelector from './CountrySelector';
 import CreatePayment from './CreatePayment';
 import CurrencySelector from './CurrencySelector';
 import PaymentCompleted from './PaymentCompleted';
@@ -26,7 +26,6 @@ export default function RootLayout() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StatusBar
           barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
           backgroundColor={colorScheme === 'dark' ? '#000000' : '#FFFFFF'}
@@ -68,6 +67,16 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="CountrySelector"
+            component={CountrySelector}
+            options={{
+              title: 'Seleccionar País',
+              headerTitleAlign: 'center',
+              headerBackTitleVisible: false,
+              headerTintColor: '#002859',
+            }}
+          />
+          <Stack.Screen
             name="PaymentCompleted"
             component={PaymentCompleted}
             options={{
@@ -83,7 +92,6 @@ export default function RootLayout() {
             }}
           />
         </Stack.Navigator>
-      </ThemeProvider>
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -18,7 +18,6 @@ export default function CreatePaymentScreen({ navigation }) {
   const [notes, setNotes] = useState('');
   const [currency, setCurrency] = useState('EUR');
   const [loading, setLoading] = useState(false);
-  const { colors, dark } = useTheme();
   const route = useRoute();
 
   useFocusEffect(() => {
@@ -50,7 +49,7 @@ export default function CreatePaymentScreen({ navigation }) {
               onSelect: (val) => setCurrency(val),
             })
           }
-          style={{ color: colors.text, backgroundColor: colors.background }}
+          style={{ color: '#002859', backgroundColor: '#D3DCE64D' }}
         >
           <Text>
             {currency} ▼
@@ -58,7 +57,7 @@ export default function CreatePaymentScreen({ navigation }) {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, currency, colors.text, colors.background]);
+  }, [navigation, currency]);
 
   const maxLength = 140;
   const isValid = !!amount && notes.length <= maxLength;
@@ -105,13 +104,9 @@ export default function CreatePaymentScreen({ navigation }) {
     }
   };
 
-  const placeholderColor = dark ? '#888' : '#aaa';
-  const borderColor = dark ? '#444' : '#ccc';
-  const charColor = dark ? '#aaa' : '#666';
-
   return (
     <KeyboardAvoidingView
-      style={[styles.wrapper, { backgroundColor: colors.background }]}
+      style={styles.wrapper}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <SafeAreaView style={styles.container}>
@@ -120,39 +115,40 @@ export default function CreatePaymentScreen({ navigation }) {
             style={[
               styles.amountInputDisplay,
               {
-                color: parseFloat(amount) > 0 ? "#035AC5" : colors.text,
+                color: parseFloat(amount) > 0 ? "#035AC5" : '#C0CCDA',
               },
             ]}
             keyboardType="numeric"
             value={amount}
             onChangeText={setAmount}
             placeholder="0.00"
-            placeholderTextColor={placeholderColor}
+            placeholderTextColor={'#C0CCDA'}
           />
           <Text
-            style={[
-              styles.currencySymbolDisplay,
-              { color: parseFloat(amount) > 0 ? "#035AC5" : colors.text },
+            style={[styles.currencySymbolDisplay,
+            {
+              color: parseFloat(amount) > 0 ? "#035AC5" : '#C0CCDA',
+            },
             ]}
           >
             {getCurrencySymbol(currency)}
           </Text>
         </View>
 
-        <Text style={[styles.label, { color: colors.text }]}>Concepto</Text>
+        <Text style={styles.label}>Concepto</Text>
         <TextInput
           style={[
             styles.textArea,
-            { color: colors.text, borderColor },
+            { color: '#002859' },
           ]}
           multiline
           maxLength={maxLength}
           placeholder="Añade una descripción"
-          placeholderTextColor={placeholderColor}
+          placeholderTextColor={'#C0CCDA'}
           value={notes}
           onChangeText={setNotes}
         />
-        <Text style={[styles.charCount, { color: charColor }]}>
+        <Text style={styles.charCount}>
           {notes.length}/{maxLength} caracteres
         </Text>
 
@@ -162,7 +158,7 @@ export default function CreatePaymentScreen({ navigation }) {
           style={[
             styles.button,
             {
-              backgroundColor: isValid ? '#0053A4' : (dark ? '#2a2f36' : '#E6F0FA'),
+              backgroundColor: isValid ? '#0053A4' : '#E6F0FA',
             },
           ]}
         >
@@ -204,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     marginLeft: 8,
     fontWeight: '600',
+    color: '#C0CCDA'
   },
   label: {
     fontWeight: '600',
