@@ -6,7 +6,7 @@ import {
   Text,
   View
 } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+import QRCodeStyled from 'react-native-qrcode-styled';
 
 export default function QRCodeScreen({ route, navigation }) {
   const { webUrl, identifier, amount, currencySymbol } = route.params;
@@ -58,11 +58,16 @@ export default function QRCodeScreen({ route, navigation }) {
       </View>
 
       <View style={styles.qrWrapper}>
-        <QRCode
-          value={`https://${webUrl}`}
-          size={240}
-          logo={require('../assets/images/bitnovoLogo.png')}
-          logoSize={60}
+        <QRCodeStyled
+          data={`https://${webUrl}`}
+          style={{ backgroundColor: 'white' }}
+          logo={{
+          href: require('../assets/images/bitnovoLogo.png'),
+          padding: 4,
+          scale: 2
+        }}
+          padding={20}
+          pieceSize={10}
         />
       </View>
 
@@ -101,6 +106,7 @@ const styles = StyleSheet.create({
     color: '#003E8A',
     fontSize: 14,
     fontWeight: '500',
+    fontFamily: 'Mulish',
   },
   qrWrapper: {
     backgroundColor: 'white',
@@ -113,11 +119,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: 'white',
     marginBottom: 12,
+    fontFamily: 'Mulish',
   },
   note: {
     color: '#D6E4F5',
     fontSize: 14,
     textAlign: 'center',
     paddingHorizontal: 32,
+    fontFamily: 'Mulish',
   },
 });

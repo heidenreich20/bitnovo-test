@@ -49,7 +49,7 @@ export default function CreatePaymentScreen({ navigation }) {
               onSelect: (val) => setCurrency(val),
             })
           }
-          style={{ color: '#002859', backgroundColor: '#D3DCE64D' }}
+          style={styles.currencyButton}
         >
           <Text>
             {currency} ▼
@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     padding: 0,
     margin: 0,
+    fontFamily: 'Mulish',
   },
   currencySymbolDisplay: {
     fontSize: 32,
@@ -205,6 +206,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: '600',
     marginBottom: 6,
+    fontFamily: 'Mulish',
   },
   textArea: {
     borderWidth: 1,
@@ -213,14 +215,24 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top',
     marginBottom: 4,
+    fontFamily: 'Mulish',
   },
   charCount: {
     alignSelf: 'flex-end',
     marginBottom: 24,
+    fontFamily: 'Mulish',
   },
   button: {
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  currencyButton: {
+    color: '#002859', 
+    backgroundColor: '#D3DCE64D', 
+    borderRadius: 100, 
+    paddingHorizontal: 16, 
+    paddingVertical: 4, 
+    width: 'fit-content',
   },
 });

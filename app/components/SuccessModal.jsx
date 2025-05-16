@@ -27,11 +27,6 @@ export default function SuccessModal({ visible, onClose, channel }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     button: {
         padding: 12,
         backgroundColor: '#0053A4',
@@ -40,52 +35,66 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: '600',
+        fontFamily: 'Mulish',
     },
     overlay: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         backgroundColor: "rgba(0, 40, 89, 0.3)",
     },
     modal: {
-        width: 300,
-        padding: 20,
+        display: 'flex',
+        gap: 16,
+        height: '50%',
         backgroundColor: '#fff',
-        borderRadius: 8,
+        borderRadius: 24,
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 24,
+        marginVertical: 15,
+        marginHorizontal: 15,
     },
     iconWrapper: {
         backgroundColor: '#A1E4FC',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: 80,
+        height: 80,
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
     },
     checkmark: {
-        fontSize: 32,
+        fontSize: 42,
         color: '#00C8D3',
     },
     title: {
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 26,
+        fontWeight: '700',
         color: '#002859',
         marginBottom: 8,
+        fontFamily: 'Mulish',
     },
     message: {
+        fontSize: 14,
         color: '#666',
         textAlign: 'center',
         marginBottom: 24,
+        fontFamily: 'Mulish',
+
     },
     buttonClose: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#0053A4',
-        padding: 12,
-        borderRadius: 8,
+        padding: 24,
+        borderRadius: 6,
+        width: 320,
     },
     buttonCloseText: {
         color: '#fff',
-        fontWeight: '600',
+        fontWeight: '700',
+        fontFamily: 'Mulish',
     },
 });

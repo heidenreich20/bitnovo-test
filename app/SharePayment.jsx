@@ -72,6 +72,7 @@ export default function SharePaymentScreen({ navigation }) {
       .then(() => {
         setSuccessChannel('WhatsApp');
         setSuccessVisible(true);
+        setIsWaitingPayment(true);
       })
       .catch(() => {
         Alert.alert('Error', 'No se pudo abrir WhatsApp');
@@ -88,6 +89,7 @@ export default function SharePaymentScreen({ navigation }) {
         .then(() => {
           setSuccessVisible(true);
           setSuccessChannel('correo electrónico');
+          setIsWaitingPayment(true);
         })
         .catch(() => {
           Alert.alert('Error', 'No se pudo abrir el cliente de correo electrónico');
@@ -152,7 +154,6 @@ export default function SharePaymentScreen({ navigation }) {
           <TextInput
             style={styles.textInput}
             value={webUrl}
-            editable={false}
             multiline={false}
           />
         </View>
@@ -212,7 +213,7 @@ export default function SharePaymentScreen({ navigation }) {
       <View style={styles.shareLink}>
         <Image source={QRIcon} style={{ width: 24, height: 24, marginEnd: 6 }} />
         <View style={[styles.textInput, { flex: 1, flexDirection: 'row', alignItems: 'center' }]}>
-          <Text style={styles.shareText}>Compartir con otras aplicaciones</Text>
+          <Text style={{fontFamily: 'Mulish', fontSize: 12, color: '#002859'}}>Compartir con otras aplicaciones</Text>
         </View>
       </View>
       <SuccessModal
@@ -252,6 +253,7 @@ const styles = StyleSheet.create({
   paymentTitle: {
     fontSize: 16,
     marginBottom: 4,
+    fontFamily: 'Mulish',
   },
   paymentAmount: {
     fontSize: 32,
@@ -262,6 +264,7 @@ const styles = StyleSheet.create({
   paymentSubtitle: {
     color: '#666',
     fontSize: 14,
+    fontFamily: 'Mulish',
   },
   shareLink: {
     borderWidth: 1,
@@ -272,12 +275,14 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 6,
     marginBottom: 16,
+    fontFamily: 'Mulish',
   },
   linkWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
     marginBottom: 16,
+    fontFamily: 'Mulish',
   },
   input: {
     flex: 1,
@@ -285,6 +290,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 18,
     paddingHorizontal: 16,
+    fontFamily: 'Mulish',
   },
   textInput: {
     flex: 1,
@@ -292,6 +298,7 @@ const styles = StyleSheet.create({
     color: '#002859',
     paddingVertical: 18,
     paddingHorizontal: 16,
+    fontFamily: 'Mulish',
   },
   button: {
     backgroundColor: '#035AC5',
@@ -304,6 +311,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'Mulish',
   },
   shareText: {
     color: '#002859',
@@ -320,6 +328,7 @@ const styles = StyleSheet.create({
     color: '#002859',
     fontWeight: '500',
     fontSize: 14,
+    fontFamily: 'Mulish',
   },
 });
 

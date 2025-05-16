@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: 40,
         paddingBottom: 32,
+        paddingHorizontal: 20,
     },
     logo: {
         width: 140,
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
     },
     content: {
         alignItems: 'center',
+        marginVertical: 'auto'
     },
     checkIcon: {
         width: 120,
@@ -62,27 +64,31 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     title: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: '700',
-        color: '#333',
+        color: '#002859',
         marginBottom: 8,
+        fontFamily: 'Mulish',
     },
     subtitle: {
         fontSize: 16,
-        color: '#666',
+        color: '#002859',
         textAlign: 'center',
         paddingHorizontal: 32,
+        fontFamily: 'Mulish',
     },
     button: {
-        backgroundColor: '#F5F7FA',
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: '#F9FAFC',
         paddingVertical: 14,
         paddingHorizontal: 64,
-        borderRadius: 12,
-        elevation: 2,
+        borderRadius: 6,
     },
     buttonText: {
-        color: '#003E8A',
+        color: '#035AC5',
         fontWeight: '600',
         fontSize: 16,
+        fontFamily: 'Mulish',
     },
 });
